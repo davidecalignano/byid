@@ -1,0 +1,37 @@
+{
+  "name": "byid",
+  "version": "0.1.0",
+  "description": "Makes array of objects accessible",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel src -d lib",
+    "test": "jest --watch src/*",
+    "test:coverage": "npm run test -- --coverage && cat ./coverage/lcov.info | coveralls",
+    "prepublish": "npm run build"    
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davidecalignano/byid.git"
+  },
+  "keywords": [
+    "array",
+    "object",
+    "json",
+    "api",
+    "byid",
+    "ids"
+  ],
+  "author": "Davide Calignano <davidecalignano@gmail.com> (davidecalignano.it)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/davidecalignano/byid/issues"
+  },
+  "homepage": "https://github.com/davidecalignano/byid#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "coveralls": "^3.0.0",
+    "jest": "^21.2.1"
+  }
+}

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "babel src -d lib",
-    "test": "jest --watch src/*",
+    "test": "jest",
     "test:coverage": "npm run test -- --coverage && cat ./coverage/lcov.info | coveralls",
     "prepublish": "npm run build"    
   },

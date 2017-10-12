@@ -1,13 +1,13 @@
 {
   "name": "byid",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Makes array of objects accessible",
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src -d lib",
     "test": "jest",
     "test:coverage": "npm run test -- --coverage && cat ./coverage/lcov.info | coveralls",
-    "prepublish": "npm run build"    
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",

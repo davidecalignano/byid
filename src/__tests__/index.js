@@ -1,6 +1,4 @@
-import {
-    normalize
-} from '../';
+import { normalize } from '../';
 
 describe('byId', () => {
 

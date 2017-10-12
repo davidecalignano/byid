@@ -2,7 +2,7 @@
   "name": "byid",
   "version": "0.1.0",
   "description": "Makes array of objects accessible",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "build": "babel src -d lib",
     "test": "jest",

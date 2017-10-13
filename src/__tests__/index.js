@@ -5,6 +5,82 @@ import {
     denormalizer
 } from '../';
 
+
+const denormalizedData = {
+    "id": "123",
+    "title": "My awesome blog post",
+    "author": "Davide",
+    "comments": [{
+        "id": "324",
+        "content": "foo"
+    }, {
+        "id": "273",
+        "content": "bar"
+    }, {
+        "id": "986",
+        "content": "moo"
+    }],
+    "like": [{
+        "id": "facebook",
+        "profiles": [{
+            "uuid": "abcd",
+            "name": "Mike",
+            "timestamp": "123456789"
+        }, {
+            "uuid": "efgh",
+            "name": "Jana",
+            "timestamp": "987654321"
+        }]
+    }]
+}
+
+
+const normalizedData = {
+    "id": "123",
+    "title": "My awesome blog post",
+    "author": "Davide",
+    "comments": {
+        ids: ["324", "273", "986"],
+        byId: {
+            "324": {
+                "id": "324",
+                "content": "foo"
+            },
+            "273": {
+                "id": "273",
+                "content": "bar"
+            },
+            "986": {
+                "id": "986",
+                "content": "moo"
+            }
+        }
+    },
+    "like": {
+        ids: ["facebook"],
+        byId: {
+            "facebook": {
+                "id": "facebook",
+                "profiles": {
+                    "ids": ["abcd", "efgh"],
+                    "byId": {
+                        "abcd": {
+                            "uuid": "abcd",
+                            "name": "Mike",
+                            "timestamp": "123456789"
+                        },
+                        "efgh": {
+                            "uuid": "efgh",
+                            "name": "Jana",
+                            "timestamp": "987654321"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 describe('byId/normalize', () => {
 
     const input = {
@@ -33,42 +109,24 @@ describe('byId/normalize', () => {
                 "timestamp": "987654321"
             }]
         }]
-
     }
 
-
-    it('should return the input', () => {
+    it('should return the denormalizedData', () => {
         const schema = {}
-        expect(normalize(input, schema)).toEqual(input)
+        expect(normalize(normalizedData, schema)).toEqual(normalizedData)
     })
 
-    it('should return the input normalized', () => {
+    it('should return the denormalizedData normalized based on schema', () => {
         const schema = {
             comments: {}
         }
-        expect(normalize(input, schema)).toEqual({
-            ...input,
-            comments: {
-                ids: ["324", "273", "986"],
-                byId: {
-                    "324": {
-                        "id": "324",
-                        "content": "foo"
-                    },
-                    "273": {
-                        "id": "273",
-                        "content": "bar"
-                    },
-                    "986": {
-                        "id": "986",
-                        "content": "moo"
-                    }
-                }
-            }
+        expect(normalize(denormalizedData, schema)).toEqual({
+            ...denormalizedData,
+            comments: normalizedData.comments
         })
     })
 
-    it('should return the input normalized deep', () => {
+    it('should return the denormalizedData normalized based on nested schema and different key', () => {
         const schema = {
             like: {
                 schema: {
@@ -79,31 +137,9 @@ describe('byId/normalize', () => {
             }
         }
 
-        expect(normalize(input, schema)).toEqual({
-            ...input,
-            like: {
-                ids: ["facebook"],
-                byId: {
-                    "facebook": {
-                        "id": "facebook",
-                        "profiles": {
-                            "ids": ["abcd", "efgh"],
-                            "byId": {
-                                "abcd": {
-                                    "uuid": "abcd",
-                                    "name": "Mike",
-                                    "timestamp": "123456789"
-                                },
-                                "efgh": {
-                                    "uuid": "efgh",
-                                    "name": "Jana",
-                                    "timestamp": "987654321"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        expect(normalize(denormalizedData, schema)).toEqual({
+            ...denormalizedData,
+            like: normalizedData.like
         })
     })
 })
@@ -111,73 +147,18 @@ describe('byId/normalize', () => {
 
 
 describe('byId/denormalize', () => {
-    const input = {
-        "id": "123",
-        "title": "My awesome blog post",
-        "author": "Davide",
-        "comments": {
-            ids: ["324", "273", "986"],
-            byId: {
-                "324": {
-                    "id": "324",
-                    "content": "foo"
-                },
-                "273": {
-                    "id": "273",
-                    "content": "bar"
-                },
-                "986": {
-                    "id": "986",
-                    "content": "moo"
-                }
-            }
-        },
-        "like": {
-            ids: ["facebook"],
-            byId: {
-                "facebook": {
-                    "id": "facebook",
-                    "profiles": {
-                        "ids": ["abcd", "efgh"],
-                        "byId": {
-                            "abcd": {
-                                "uuid": "abcd",
-                                "name": "Mike",
-                                "timestamp": "123456789"
-                            },
-                            "efgh": {
-                                "uuid": "efgh",
-                                "name": "Jana",
-                                "timestamp": "987654321"
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    it('should return the input denormalized', () => {
+    it('should return the normalizedData denormalized based on schema', () => {
         const schema = {
             comments: {}
         }
-        expect(denormalize(input, schema)).toEqual({
-            ...input,
-            "comments": [{
-                "id": "324",
-                "content": "foo"
-            }, {
-                "id": "273",
-                "content": "bar"
-            }, {
-                "id": "986",
-                "content": "moo"
-            }]
+        expect(denormalize(normalizedData, schema)).toEqual({
+            ...normalizedData,
+            comments: denormalizedData.comments
         })
     })
 
 
-    it('should return the input denormalized deep', () => {
+    it('should return the normalizedData denormalized based on nested schema and different key', () => {
         const schema = {
             like: {
                 schema: {
@@ -188,20 +169,9 @@ describe('byId/denormalize', () => {
             }
         }
 
-        expect(denormalize(input, schema)).toEqual({
-            ...input,
-            "like": [{
-                "id": "facebook",
-                "profiles": [{
-                    "uuid": "abcd",
-                    "name": "Mike",
-                    "timestamp": "123456789"
-                }, {
-                    "uuid": "efgh",
-                    "name": "Jana",
-                    "timestamp": "987654321"
-                }]
-            }]
+        expect(denormalize(normalizedData, schema)).toEqual({
+            ...normalizedData,
+            like: denormalizedData.like
         })
     })
 
@@ -217,20 +187,9 @@ describe('byId/denormalize', () => {
             }
         }
 
-        expect(denormalize([input], schema)).toEqual([{
-            ...input,
-            "like": [{
-                "id": "facebook",
-                "profiles": [{
-                    "uuid": "abcd",
-                    "name": "Mike",
-                    "timestamp": "123456789"
-                }, {
-                    "uuid": "efgh",
-                    "name": "Jana",
-                    "timestamp": "987654321"
-                }]
-            }]
+        expect(denormalize([normalizedData], schema)).toEqual([{
+            ...normalizedData,
+            like: denormalizedData.like
         }])
     })
 })
@@ -238,32 +197,8 @@ describe('byId/denormalize', () => {
 
 
 describe('byId/normalizer', () => {
-    const array = [{
-        "uuid": "abcd",
-        "name": "Mike",
-        "timestamp": "123456789"
-    }, {
-        "uuid": "efgh",
-        "name": "Jana",
-        "timestamp": "987654321"
-    }];
-
     it('should normalize an array', () => {
-        expect(normalizer(array, 'uuid')).toEqual({
-            "ids": ["abcd", "efgh"],
-            "byId": {
-                "abcd": {
-                    "uuid": "abcd",
-                    "name": "Mike",
-                    "timestamp": "123456789"
-                },
-                "efgh": {
-                    "uuid": "efgh",
-                    "name": "Jana",
-                    "timestamp": "987654321"
-                }
-            }
-        })
+        expect(normalizer(denormalizedData.comments, 'id')).toEqual(normalizedData.comments)
     })
 
     it('should normalize an empty array', () => {
@@ -276,31 +211,7 @@ describe('byId/normalizer', () => {
 
 
 describe('byId/denormalizer', () => {
-    const object = {
-        "ids": ["abcd", "efgh"],
-        "byId": {
-            "abcd": {
-                "uuid": "abcd",
-                "name": "Mike",
-                "timestamp": "123456789"
-            },
-            "efgh": {
-                "uuid": "efgh",
-                "name": "Jana",
-                "timestamp": "987654321"
-            }
-        }
-    };
-
     it('should denormalize a normalized object', () => {
-        expect(denormalizer(object)).toEqual([{
-            "uuid": "abcd",
-            "name": "Mike",
-            "timestamp": "123456789"
-        }, {
-            "uuid": "efgh",
-            "name": "Jana",
-            "timestamp": "987654321"
-        }])
+        expect(denormalizer(normalizedData.comments)).toEqual(denormalizedData.comments)
     })
 })

@@ -92,10 +92,11 @@ const output = denormalize(data, schema)
 }
 ```
 
+## Examples
+[Nested normalization](examples/nested-normalization.md)
+
+
 ## Dependencies
 None.
-
-## Examples
-Coming soon.
 
 

@@ -16,6 +16,8 @@
     "url": "https://github.com/davidecalignano/byid.git"
   },
   "keywords": [
+    "normalize",
+    "denormalize",
     "array",
     "object",
     "json",

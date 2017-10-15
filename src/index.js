@@ -1,4 +1,9 @@
-export function normalizer(array, key) {
+export function normalizer(array, key = 'id') {
+
+    if (!Array.isArray(array)) {
+        return array;
+    }
+
     if (!array.length) {
         return {
             byId: {},
@@ -21,6 +26,9 @@ export function normalizer(array, key) {
 
 
 export function denormalizer(object) {
+    if (typeof object !== "object") {
+        return object;
+    }
     return object.ids.map(id => object.byId[id])
 }
 
@@ -33,15 +41,20 @@ export function normalize(data, schema) {
     } else {
         let result = {...data};
         Object.keys(schema).forEach(function(key) {
+            if(!schema[key]) {
+                return data
+            };
+
             const {
-                schema: schemaChild = null,
-                id: schemaId = 'id'
-            } = schema[key] || {}
-            if (schemaChild !== null) {
-                const child = normalize(data[key], schemaChild)
-                result[key] = normalizer(child, schemaId)
+                schema: childSchema,
+                id: childId
+            } = schema[key];
+
+            if (childSchema) {
+                const child = normalize(data[key], childSchema)
+                result[key] = normalizer(child, childId)
             } else {
-                result[key] = normalizer(data[key], schemaId)
+                result[key] = normalizer(data[key], childId)
             }
         });
 
@@ -59,13 +72,13 @@ export function denormalize(data, schema) {
     } else {
         let result = {...data};
         Object.keys(schema).forEach(function(key) {
-            const {
-                schema: schemaChild = null,
-                id: schemaId = 'id'
-            } = schema[key] || {}
-            if (schemaChild !== null) {
+            if(!schema[key]) {
+                return data
+            };
+            const { schema: childSchema } = schema[key];
+            if (childSchema) {
                 result[key] = data[key].ids.map(id => {
-                    return denormalize(data[key].byId[id], schemaChild)
+                    return denormalize(data[key].byId[id], childSchema)
                 })
             } else {
                 result[key] = denormalizer(data[key])

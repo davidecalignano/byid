@@ -142,6 +142,23 @@ describe('byId/normalize', () => {
             like: normalizedData.like
         })
     })
+
+
+    it('should return the denormalizedData if schema does not match', () => {
+        const schema = {
+            something: {}
+        }
+
+        expect(normalize(denormalizedData, schema)).toEqual(denormalizedData)
+    })
+
+    it('should return the denormalizedData if schema is falsy', () => {
+        const schema = {
+            comments: null
+        }
+        
+        expect(normalize(denormalizedData, schema)).toEqual(denormalizedData)
+    })
 })
 
 
@@ -191,6 +208,22 @@ describe('byId/denormalize', () => {
             ...normalizedData,
             like: denormalizedData.like
         }])
+    })
+
+    it('should return the normalizedData if schema does not match', () => {
+        const schema = {
+            something: {}
+        }
+
+        expect(denormalize(normalizedData, schema)).toEqual(normalizedData)
+    })
+
+    it('should return the normalizedData if schema is falsy', () => {
+        const schema = {
+            comments: null
+        }
+        
+        expect(denormalize(normalizedData, schema)).toEqual(normalizedData)
     })
 })
 
